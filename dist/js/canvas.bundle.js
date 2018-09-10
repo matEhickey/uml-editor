@@ -171,7 +171,8 @@ addEventListener('contextmenu', function (event) {
 
   var widget = (0, _initialisation.isIn)(x, y);
   if (widget) {
-    console.log("right click on '" + widget.name + "'");
+    // console.log("right click on '"+widget.name+"'")
+    widget.rightClick(x, y);
   } else {
     console.log("right click on blank");
   }
@@ -196,6 +197,8 @@ addEventListener('contextmenu', function (event) {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _entity = __webpack_require__(/*! ./../entity */ "./src/entity.js");
+
+var _menus = __webpack_require__(/*! ./../menus/menus */ "./src/menus/menus.js");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -268,6 +271,20 @@ var ClassD = function (_Entity) {
       c.stroke();
       c.strokeStyle = "#000000";
       c.closePath();
+    }
+  }, {
+    key: "rightClick",
+    value: function rightClick(x, y) {
+      console.log("right_click on a class");
+      var menus = (0, _menus.getMenus)();
+      // console.log(menus)
+      menus.raz();
+
+      menus.addOption("Add property");
+      menus.addOption("Add method");
+      menus.addOption("Modify name");
+
+      menus.show(x, y);
     }
   }]);
 
@@ -470,6 +487,11 @@ var Entity = function () {
       this.draw(context);
     }
   }, {
+    key: 'rightClick',
+    value: function rightClick(x, y) {
+      console.log("right_clicked Entity");
+    }
+  }, {
     key: 'isIn',
     value: function isIn(x, y) {
       // console.log("entity("+this.name+").isOn "+"["+x+":"+y+"]")
@@ -514,7 +536,10 @@ var _particles = __webpack_require__(/*! ./components/particles */ "./src/compon
 
 var _package = __webpack_require__(/*! ./components/package */ "./src/components/package.js");
 
+var _menus = __webpack_require__(/*! ./menus/menus */ "./src/menus/menus.js");
+
 var entities = void 0;
+var menus = (0, _menus.getMenus)();
 var canvas = document.querySelector('canvas');
 var context = canvas.getContext('2d');
 
@@ -523,9 +548,6 @@ canvas.height = innerHeight;
 
 function init() {
   entities = [];
-  // for (let i = 0; i < 20; i++) {
-  //   entities.push(new Particles(canvas.width/2, canvas.height/2 , utils.randomIntFromRange(1,50), utils.randomColor()));
-  // }
 
   for (var i = 0; i < 2; i++) {
     entities.push(new _class.ClassD("class_" + i));
@@ -535,20 +557,17 @@ function init() {
   }
 }
 
-// Animation Loop
-function animate() {
-  requestAnimationFrame(animate);
-  updateObjects();
-}
-
 var numberOfUpdating = 0;
 function updateObjects() {
+
   if (false) {}
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   entities.forEach(function (entity) {
     entity.update(context);
   });
+
+  menus.update(context);
 }
 
 function isIn(x, y) {
@@ -571,7 +590,125 @@ function clickOn(x, y) {
   });
 }
 
-module.exports = { init: init, animate: animate, updateObjects: updateObjects, clickOn: clickOn, isIn: isIn, canvas: canvas, context: context };
+module.exports = { init: init, updateObjects: updateObjects, clickOn: clickOn, isIn: isIn, canvas: canvas, context: context };
+
+/***/ }),
+
+/***/ "./src/menus/menus.js":
+/*!****************************!*\
+  !*** ./src/menus/menus.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Menus = function () {
+  function Menus() {
+    _classCallCheck(this, Menus);
+
+    this.options = [];
+    this.displayed = false;
+    this.x = 0;
+    this.y = 0;
+  }
+
+  _createClass(Menus, [{
+    key: "show",
+    value: function show(x, y) {
+      this.displayed = true;
+      this.x = x;
+      this.y = y;
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.displayed = false;
+    }
+  }, {
+    key: "update",
+    value: function update(context) {
+      this.draw(context);
+    }
+  }, {
+    key: "draw",
+    value: function draw(c) {
+      c.beginPath();
+
+      if (this.displayed) {
+        console.log("drawing menus");
+
+        c.fillStyle = "white";
+        var optLen = this.options.length;
+        c.fillRect(this.x, this.y, 100, 20 * optLen);
+
+        c.fillStyle = "grey";
+        c.strokeStyle = "grey";
+
+        var i = 0;
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.options[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var option = _step.value;
+
+            c.rect(this.x, this.y + 20 * i, 100, 20);
+            c.fillText(option, this.x + 5, this.y + 20 * i + 15);
+            i += 1;
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+      c.stroke();
+      c.closePath();
+
+      c.fillStyle = "black";
+      c.strokeStyle = "black";
+    }
+  }, {
+    key: "addOption",
+    value: function addOption(option) {
+      this.options.push(option);
+    }
+  }, {
+    key: "raz",
+    value: function raz() {
+      this.options = [];
+    }
+  }]);
+
+  return Menus;
+}();
+
+var menus;
+
+function getMenus() {
+  if (!menus) {
+    menus = new Menus();
+  }
+  return menus;
+}
+
+module.exports = { getMenus: getMenus };
 
 /***/ }),
 

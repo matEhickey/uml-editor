@@ -2,19 +2,19 @@ import {Entity} from './entity'
 import {ClassD} from './components/class'
 import {Particles} from './components/particles'
 import {PackageD} from './components/package'
+import {getMenus} from './menus/menus'
 
 let entities
+let menus = getMenus();
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 
 canvas.width = innerWidth
 canvas.height = innerHeight
 
+
 function init() {
     entities = []
-    // for (let i = 0; i < 20; i++) {
-    //   entities.push(new Particles(canvas.width/2, canvas.height/2 , utils.randomIntFromRange(1,50), utils.randomColor()));
-    // }
 
     for (let i = 0; i < 2; i++) {
         entities.push(new ClassD("class_"+i));
@@ -24,14 +24,10 @@ function init() {
     }
 }
 
-// Animation Loop
-// function animate() {
-//     requestAnimationFrame(animate)
-//     updateObjects()
-// }
 
 var numberOfUpdating = 0
 function updateObjects(){
+
   if(false){
     numberOfUpdating += 1
     console.log("updateObjects : "+numberOfUpdating)
@@ -41,6 +37,8 @@ function updateObjects(){
   entities.forEach(entity => {
    entity.update(context);
   });
+
+  menus.update(context)
 }
 
 function isIn(x,y){
@@ -63,4 +61,4 @@ function clickOn(x,y){
   })
 }
 
-module.exports = {init, animate, updateObjects, clickOn, isIn, canvas, context}
+module.exports = {init, updateObjects, clickOn, isIn, canvas, context}

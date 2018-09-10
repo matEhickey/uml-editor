@@ -24,6 +24,10 @@ class Entity{
     this.draw(context)
   }
 
+  rightClick(x,y){
+    console.log("right_clicked Entity")
+  }
+
   isIn(x,y){
     // console.log("entity("+this.name+").isOn "+"["+x+":"+y+"]")
     // console.log("x:"+this.x+" y:"+this.y)

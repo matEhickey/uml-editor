@@ -73,7 +73,8 @@ addEventListener('contextmenu', event => {
 
     var widget = isIn(x,y)
     if(widget){
-      console.log("right click on '"+widget.name+"'")
+      // console.log("right click on '"+widget.name+"'")
+      widget.rightClick(x,y)
     }
     else{
       console.log("right click on blank")

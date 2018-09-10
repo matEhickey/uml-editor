@@ -1,4 +1,5 @@
 import {Entity} from "./../entity"
+import {getMenus} from "./../menus/menus"
 
 class ClassD extends Entity{
   constructor(name){
@@ -50,7 +51,7 @@ class ClassD extends Entity{
     c.fillText("# "+this.methods.length+" methods", x+5, y+15)
 
     this.length = 25 + numberOfProps*25 + numberOfMethods*25
-    
+
     if(this.focus){
       c.strokeStyle="#0000FF"
     }
@@ -59,6 +60,19 @@ class ClassD extends Entity{
     c.strokeStyle="#000000"
     c.closePath()
 
+  }
+
+  rightClick(x,y){
+    console.log("right_click on a class")
+    var menus = getMenus()
+    // console.log(menus)
+    menus.raz()
+    
+    menus.addOption("Add property")
+    menus.addOption("Add method")
+    menus.addOption("Modify name")
+
+    menus.show(x,y)
   }
 
 }
